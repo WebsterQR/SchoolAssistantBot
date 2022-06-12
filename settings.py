@@ -1,0 +1,2 @@
+class Telegram:
+    TOKEN = '5538206782:AAH6ZDd9TC-4ERTqyNbvZ_Rmua9TFI4ehJE'
