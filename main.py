@@ -1,28 +1,82 @@
 import telebot
 import settings
 import keyboards
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardRemove
 
 bot = telebot.TeleBot(settings.Telegram.TOKEN)
 
 
 @bot.message_handler(commands=["start"])
 def start(message):
-    msg = bot.send_message(message.chat.id, 'Давай познакомимся! Введи свои Фамилию, Имя, Отчество!')
-    bot.register_next_step_handler(msg, fio_step)
-
-def fio_step(message):
-    user_info = message.text.split()
     msg = bot.send_message(
         message.chat.id,
-        'Очень приятно! А теперь расскажи мне в каком классе ты учишься!',
-        reply_markup=[keyboards.CLASS_CHOISE.keyboard]
+        'Привет! Для начала мне нужно знать кто ты - учитель или ученик...',
+        reply_markup=[keyboards.STUDENT_OR_TEACHER.keyboard]
     )
-    bot.register_next_step_handler(msg, choise_class, user_info)
+    bot.register_next_step_handler(msg, position_step)
+
+def position_step(message):
+    user_info = {
+        'Фамилия': '',
+        'Имя': '',
+        'Отчество': '',
+        'Класс': '',
+        'Должность': ''
+    }
+    if message.text == "Ученик":
+        user_info['Должность'] = 'Ученик'
+    else:
+        user_info['Должность'] = 'Учитель'
+    msg = bot.send_message(
+        message.chat.id,
+        'А теперь давай познакомимся! Введи свои Фамилию, Имя, Отчество!',
+        reply_markup=[ReplyKeyboardRemove()]
+    )
+    bot.register_next_step_handler(msg, fio_step, user_info)
+
+def fio_step(message, user_info):
+    FIO = message.text.split()
+    user_info['Фамилия'] = FIO[0]
+    user_info['Имя'] = FIO[1]
+    user_info['Отчество'] = FIO[2]
+    if user_info['Должность'] == 'Ученик':
+        msg = bot.send_message(
+            message.chat.id,
+            f'Очень приятно, {user_info["Имя"]}! А теперь расскажи мне в каком классе ты учишься!',
+            reply_markup=[keyboards.CLASS_CHOISE.keyboard]
+        )
+        bot.register_next_step_handler(msg, choise_class, user_info)
+    else:
+        msg = bot.send_message(
+            message.chat.id,
+            f'Очень приятно, {user_info["Имя"]}! Но мне нужно знать, действительно ли Вы учитель. '
+            f'Пожалуйста, введите проверочный код',
+        )
+        bot.register_next_step_handler(msg, confirm_teacher, user_info)
 
 def choise_class(message, user_info):
-    user_info.append(message.text)
+    user_info['Класс'] = message.text
+    bot.send_message(
+        message.chat.id,
+        'Регистрация в боте прошла успешно!',
+        reply_markup=[ReplyKeyboardRemove()]
+    )
     print(user_info)
+
+def confirm_teacher(message, user_info):
+    if message.text == settings.auth.TEACHER_PASSWORD:
+        bot.send_message(
+            message.chat.id,
+            'Регистрация в боте прошла успешно!',
+            reply_markup=[ReplyKeyboardRemove()]
+        )
+    else:
+        msg = bot.send_message(
+            message.chat.id,
+            'Неверный пароль, попробуйте еще раз!',
+            reply_markup=[ReplyKeyboardRemove()]
+        )
+        bot.register_next_step_handler(msg, confirm_teacher, user_info)
 
 # Получение сообщений от юзера
 @bot.message_handler(content_types=["text"])

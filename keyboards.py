@@ -1,4 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 class CLASS_CHOISE:
     keyboard = ReplyKeyboardMarkup()
     class_5a = KeyboardButton('5A')
@@ -44,3 +44,12 @@ class CLASS_CHOISE:
     keyboard.row(class_9a, class_9b, class_9v, class_9g)
     keyboard.row(class_10a, class_10b, class_10v)
     keyboard.row(class_11a, class_11b, class_11v)
+
+class STUDENT_OR_TEACHER:
+    keyboard = ReplyKeyboardMarkup()
+    student = KeyboardButton('Ученик')
+    teacher = KeyboardButton('Учитель')
+    keyboard.add(student, teacher)
+
+class EMPTY_KEYBOARD:
+    keyboard = ReplyKeyboardMarkup()
