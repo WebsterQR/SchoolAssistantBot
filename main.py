@@ -1,6 +1,7 @@
 import telebot
 import settings
 import keyboards
+import database
 from aiogram.types import ReplyKeyboardRemove
 
 bot = telebot.TeleBot(settings.Telegram.TOKEN)
@@ -56,6 +57,7 @@ def fio_step(message, user_info):
 
 def choise_class(message, user_info):
     user_info['Класс'] = message.text
+    database.add_user(user_info)
     bot.send_message(
         message.chat.id,
         'Регистрация в боте прошла успешно!',
@@ -65,6 +67,7 @@ def choise_class(message, user_info):
 
 def confirm_teacher(message, user_info):
     if message.text == settings.auth.TEACHER_PASSWORD:
+        database.add_user(user_info)
         bot.send_message(
             message.chat.id,
             'Регистрация в боте прошла успешно!',
