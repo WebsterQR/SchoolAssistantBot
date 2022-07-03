@@ -16,6 +16,7 @@ def add_user(user_info):
     conn = database_connect()
     if conn:
         cursor = conn.cursor()
+        #check_existence_user_and_delete_if_necessary(conn, cursor, user_info['telegram_chat_id'])
         if user_info['Должность'] == 'Ученик':
             class_id = get_class_id(cursor, user_info['Класс'])
         else:
@@ -52,3 +53,14 @@ def get_teachers_class_id(cursor, teacher_fio):
         return data[0][0]
     else:
         return 9999
+
+
+def check_existence_user_and_delete_if_necessary(conn, cursor, chat_id):
+    postgreSQL_select_Query = "SELECT * FROM users WHERE user_id = %s"
+    cursor.execute(postgreSQL_select_Query, (chat_id,))
+    data = cursor.fetchall()
+    print(data)
+    if len(data) > 0:
+        postgreSQL_delete_Query = "DELETE FROM users WHERE user_id = 176063054"
+        cursor.execute(postgreSQL_delete_Query, (chat_id,))
+        conn.commit()

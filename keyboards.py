@@ -45,11 +45,29 @@ class CLASS_CHOISE:
     keyboard.row(class_10a, class_10b, class_10v)
     keyboard.row(class_11a, class_11b, class_11v)
 
+
 class STUDENT_OR_TEACHER:
     keyboard = ReplyKeyboardMarkup()
     student = KeyboardButton('Ученик')
     teacher = KeyboardButton('Учитель')
     keyboard.add(student, teacher)
 
+
 class EMPTY_KEYBOARD:
     keyboard = ReplyKeyboardMarkup()
+
+
+class MAIN_MENU:
+    keyboard = ReplyKeyboardMarkup()
+    homework = KeyboardButton('Домашнее задание')
+    schedule = KeyboardButton('Расписание')
+    keyboard.add(homework, schedule)
+
+
+class MAIN_MENU_FOR_TEACHERS:
+    keyboard = ReplyKeyboardMarkup()
+    schedule = KeyboardButton('Расписание')
+    add_homework = KeyboardButton('Добавить домашнее задание')
+    notify_the_class = KeyboardButton('Оповестить класс')
+    keyboard.add(schedule, add_homework)
+    keyboard.add(notify_the_class)

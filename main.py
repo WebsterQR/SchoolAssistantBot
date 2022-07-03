@@ -40,7 +40,7 @@ def fio_step(message, user_info):
     user_info['Фамилия'] = FIO[0]
     user_info['Имя'] = FIO[1]
     user_info['Отчество'] = FIO[2]
-    user_info['telegram_chat_id'] = message.from_user.chat_id
+    user_info['telegram_chat_id'] = message.chat.id
     if user_info['Должность'] == 'Ученик':
         msg = bot.send_message(
             message.chat.id,
@@ -62,7 +62,7 @@ def choise_class(message, user_info):
     bot.send_message(
         message.chat.id,
         'Регистрация в боте прошла успешно!',
-        reply_markup=[ReplyKeyboardRemove()]
+        reply_markup=[keyboards.MAIN_MENU.keyboard]
     )
     print(user_info)
 
@@ -72,7 +72,7 @@ def confirm_teacher(message, user_info):
         bot.send_message(
             message.chat.id,
             'Регистрация в боте прошла успешно!',
-            reply_markup=[ReplyKeyboardRemove()]
+            reply_markup=[keyboards.MAIN_MENU_FOR_TEACHERS.keyboard]
         )
     else:
         msg = bot.send_message(
