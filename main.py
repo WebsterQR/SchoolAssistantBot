@@ -40,6 +40,7 @@ def fio_step(message, user_info):
     user_info['Фамилия'] = FIO[0]
     user_info['Имя'] = FIO[1]
     user_info['Отчество'] = FIO[2]
+    user_info['telegram_chat_id'] = message.from_user.chat_id
     if user_info['Должность'] == 'Ученик':
         msg = bot.send_message(
             message.chat.id,
@@ -84,6 +85,13 @@ def confirm_teacher(message, user_info):
 # Получение сообщений от юзера
 @bot.message_handler(content_types=["text"])
 def handle_text(message):
+    body = '{message}\n' \
+           '--\n' \
+           '{first}, {last}\n' \
+           '{username}, {id}'.format(message=message.text, first=message.from_user.first_name,
+                                     last=message.from_user.last_name, username=message.from_user.username,
+                                     id=message.chat.id)
+    print(body)
     bot.send_message(message.chat.id, 'Вы написали: ' + message.text)
 
 

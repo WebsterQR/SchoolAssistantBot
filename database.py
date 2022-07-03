@@ -28,7 +28,7 @@ def add_user(user_info):
                         user_info['Отчество'],
                         user_info['Должность'],
                         class_id,
-                        '1111111'))
+                        user_info['telegram_chat_id']))
         conn.commit()
         cursor.close()
         conn.close()
