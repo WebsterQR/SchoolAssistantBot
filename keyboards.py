@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 class CLASS_CHOISE:
     keyboard = ReplyKeyboardMarkup()
-    class_5a = KeyboardButton('5A')
+    class_5a = KeyboardButton('5А')
     class_5b = KeyboardButton('5Б')
     class_5v = KeyboardButton('5В')
     class_5g = KeyboardButton('5Г')
