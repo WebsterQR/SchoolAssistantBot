@@ -1,4 +1,8 @@
+import datetime
+
 import psycopg2
+
+import common
 import settings
 
 def database_connect():
@@ -16,7 +20,7 @@ def add_user(user_info):
     conn = database_connect()
     if conn:
         cursor = conn.cursor()
-        #check_existence_user_and_delete_if_necessary(conn, cursor, user_info['telegram_chat_id'])
+        check_existence_user_and_delete_if_necessary(conn, cursor, user_info['telegram_chat_id'])
         if user_info['Должность'] == 'Ученик':
             class_id = get_class_id(cursor, user_info['Класс'])
         else:
@@ -64,3 +68,49 @@ def check_existence_user_and_delete_if_necessary(conn, cursor, chat_id):
         postgreSQL_delete_Query = "DELETE FROM users WHERE user_id = 176063054"
         cursor.execute(postgreSQL_delete_Query, (chat_id,))
         conn.commit()
+
+def get_class_id_by_chat_id(chat_id):
+    conn = database_connect()
+    if conn:
+        cursor = conn.cursor()
+        postgreSQL_select_Query = "SELECT class_id FROM users WHERE user_id = %s"
+        cursor.execute(postgreSQL_select_Query, (chat_id,))
+        data = cursor.fetchall()
+        conn.close()
+        return data
+
+def get_shedule(day, chat_id):
+    class_id = get_class_id_by_chat_id(chat_id)[0][0]
+    today_date = datetime.date.today()
+    week_day_num = today_date.isoweekday()
+    conn = database_connect()
+    if not conn:
+        return 'error'
+    cursor = conn.cursor()
+    if day == 'today':
+        week_day = common.week_day[week_day_num]
+        if week_day_num == 7:
+            str_ans = "Сегодня воскресенье, уроков нет!"
+        else:
+            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND class_id = %s"
+            cursor.execute(postgreSQL_select_Query, (week_day, class_id))
+            data = cursor.fetchall()
+            str_ans = 'Расписание на сегодня: \n'
+            for num, el in enumerate(data):
+                str_ans += f'{num+1}) {el[0]} в кабинете {el[1]} \n'
+        return str_ans
+    elif day == 'tomorrow':
+        tomorrow_week_day_num = 1 if week_day_num == 7 else week_day_num + 1
+        if tomorrow_week_day_num == 7:
+            str_ans = "Завтра воскресенье, уроков нет!"
+        else:
+            week_day = common.week_day[tomorrow_week_day_num]
+            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND class_id = %s""
+            cursor.execute(postgreSQL_select_Query, (week_day, class_id))
+            data = cursor.fetchall()
+            str_ans = 'Расписание на завтра: \n'
+            for num, el in enumerate(data):
+                str_ans += f'{num + 1}) {el[0]} в кабинете {el[1]} \n'
+        return str_ans
+    elif day == 'all week':
+        pass

@@ -71,3 +71,12 @@ class MAIN_MENU_FOR_TEACHERS:
     notify_the_class = KeyboardButton('Оповестить класс')
     keyboard.add(schedule, add_homework)
     keyboard.add(notify_the_class)
+
+
+class SCHEDULE:
+    keyboard = ReplyKeyboardMarkup()
+    today = KeyboardButton('Расписание на сегодня')
+    tomorrow = KeyboardButton('Расписание на завтра')
+    week = KeyboardButton('Расписание на всю неделю')
+    keyboard.add(today, tomorrow)
+    keyboard.add(week)

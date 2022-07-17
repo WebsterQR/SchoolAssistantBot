@@ -85,14 +85,27 @@ def confirm_teacher(message, user_info):
 # Получение сообщений от юзера
 @bot.message_handler(content_types=["text"])
 def handle_text(message):
-    body = '{message}\n' \
-           '--\n' \
-           '{first}, {last}\n' \
-           '{username}, {id}'.format(message=message.text, first=message.from_user.first_name,
-                                     last=message.from_user.last_name, username=message.from_user.username,
-                                     id=message.chat.id)
-    print(body)
-    bot.send_message(message.chat.id, 'Вы написали: ' + message.text)
+    if message.text == 'Расписание':
+        bot.send_message(
+            message.chat.id,
+            'Выберите нужное расписание',
+            reply_markup=[keyboards.SCHEDULE.keyboard]
+        )
+    if message.text == 'Расписание на сегодня':
+        ans = database.get_shedule('today', message.chat.id)
+        bot.send_message(
+            message.chat.id,
+            ans,
+            reply_markup=[keyboards.MAIN_MENU.keyboard]
+        )
+    elif message.text == 'Расписание на завтра':
+        ans = database.get_shedule('tomorrow', message.chat.id)
+        bot.send_message(
+            message.chat.id,
+            ans,
+            reply_markup=[keyboards.MAIN_MENU.keyboard]
+        )
+    #bot.send_message(message.chat.id, 'Вы написали: ' + message.text)
 
 
 # Запускаем бота
