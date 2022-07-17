@@ -105,7 +105,7 @@ def get_shedule(day, chat_id):
             str_ans = "Завтра воскресенье, уроков нет!"
         else:
             week_day = common.week_day[tomorrow_week_day_num]
-            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND class_id = %s""
+            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND class_id = %s"
             cursor.execute(postgreSQL_select_Query, (week_day, class_id))
             data = cursor.fetchall()
             str_ans = 'Расписание на завтра: \n'
