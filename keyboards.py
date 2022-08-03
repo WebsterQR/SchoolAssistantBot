@@ -1,4 +1,8 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+
+import common
+
+
 class CLASS_CHOISE:
     keyboard = ReplyKeyboardMarkup()
     class_5a = KeyboardButton('5А')
@@ -61,7 +65,10 @@ class MAIN_MENU:
     keyboard = ReplyKeyboardMarkup()
     homework = KeyboardButton('Домашнее задание')
     schedule = KeyboardButton('Расписание')
+    find_teacher = KeyboardButton('Найти учителя')
+    next_lesson = KeyboardButton('Следующий урок')
     keyboard.add(homework, schedule)
+    keyboard.add(find_teacher, next_lesson)
 
 
 class MAIN_MENU_FOR_TEACHERS:
@@ -80,3 +87,10 @@ class SCHEDULE:
     week = KeyboardButton('Расписание на всю неделю')
     keyboard.add(today, tomorrow)
     keyboard.add(week)
+
+
+class FIND_TEACHER:
+    keyboard = ReplyKeyboardMarkup()
+    for teacher in common.teachers_list:
+        button = KeyboardButton(teacher)
+        keyboard.row(button)

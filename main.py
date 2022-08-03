@@ -98,12 +98,25 @@ def handle_text(message):
             ans,
             reply_markup=[keyboards.MAIN_MENU.keyboard]
         )
-    elif message.text == 'Расписание на завтра':
+    if message.text == 'Расписание на завтра':
         ans = database.get_shedule('tomorrow', message.chat.id)
         bot.send_message(
             message.chat.id,
             ans,
             reply_markup=[keyboards.MAIN_MENU.keyboard]
+        )
+    if message.text == 'Расписание на всю неделю':
+        ans = database.get_shedule('all week', message.chat.id)
+        bot.send_message(
+            message.chat.id,
+            ans,
+                reply_markup=[keyboards.MAIN_MENU.keyboard]
+        )
+    if message.text == 'Найти учителя':
+        bot.send_message(
+            message.chat.id,
+            'Выберите нужного Вам учителя',
+            reply_markup=[keyboards.FIND_TEACHER.keyboard]
         )
     #bot.send_message(message.chat.id, 'Вы написали: ' + message.text)
 

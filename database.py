@@ -92,8 +92,9 @@ def get_shedule(day, chat_id):
         if week_day_num == 7:
             str_ans = "Сегодня воскресенье, уроков нет!"
         else:
-            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND class_id = %s"
-            cursor.execute(postgreSQL_select_Query, (week_day, class_id))
+            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND " \
+                                      "class_id = %s"
+            cursor.execute(postgreSQL_select_Query, (week_day, class_id, ))
             data = cursor.fetchall()
             str_ans = 'Расписание на сегодня: \n'
             for num, el in enumerate(data):
@@ -105,12 +106,26 @@ def get_shedule(day, chat_id):
             str_ans = "Завтра воскресенье, уроков нет!"
         else:
             week_day = common.week_day[tomorrow_week_day_num]
-            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND class_id = %s"
-            cursor.execute(postgreSQL_select_Query, (week_day, class_id))
+            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND " \
+                                      "class_id = %s"
+            cursor.execute(postgreSQL_select_Query, (week_day, class_id, ))
             data = cursor.fetchall()
             str_ans = 'Расписание на завтра: \n'
             for num, el in enumerate(data):
                 str_ans += f'{num + 1}) {el[0]} в кабинете {el[1]} \n'
         return str_ans
     elif day == 'all week':
-        pass
+        print('====', class_id, '======')
+        str_ans = 'Расписание на всю неделю: \n'
+        for i in range(1, 7):
+            if i == 6 and class_id < 80:
+                continue
+            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE class_id = %s AND " \
+                                      "week_day = %s"
+            cursor.execute(postgreSQL_select_Query, (class_id, common.week_day[i], ))
+            data = cursor.fetchall()
+            str_ans += f'{common.week_day[i]} : \n'
+            for num, el in enumerate(data):
+                str_ans += f' {num+1}) {el[0]} в кабинете {el[1]} \n'
+
+    return str_ans
