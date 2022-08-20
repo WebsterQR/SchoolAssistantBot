@@ -11,19 +11,19 @@ class CLASS_CHOISE:
     class_5g = KeyboardButton('5Г')
     class_5d = KeyboardButton('5Д')
 
-    class_6a = KeyboardButton('6A')
+    class_6a = KeyboardButton('6А')
     class_6b = KeyboardButton('6Б')
     class_6v = KeyboardButton('6В')
     class_6g = KeyboardButton('6Г')
     class_6d = KeyboardButton('6Д')
 
-    class_7a = KeyboardButton('7A')
+    class_7a = KeyboardButton('7А')
     class_7b = KeyboardButton('7Б')
     class_7v = KeyboardButton('7В')
     class_7g = KeyboardButton('7Г')
     class_7d = KeyboardButton('7Д')
 
-    class_8a = KeyboardButton('8A')
+    class_8a = KeyboardButton('8А')
     class_8b = KeyboardButton('8Б')
     class_8v = KeyboardButton('8В')
     class_8g = KeyboardButton('8Г')
@@ -33,11 +33,11 @@ class CLASS_CHOISE:
     class_9v = KeyboardButton('9В')
     class_9g = KeyboardButton('9Г')
 
-    class_10a = KeyboardButton('10A')
+    class_10a = KeyboardButton('10А')
     class_10b = KeyboardButton('10Б')
     class_10v = KeyboardButton('10В')
 
-    class_11a = KeyboardButton('11A')
+    class_11a = KeyboardButton('11А')
     class_11b = KeyboardButton('11Б')
     class_11v = KeyboardButton('11В')
 

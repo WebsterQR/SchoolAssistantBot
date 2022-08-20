@@ -48,11 +48,9 @@ def get_class_id(cursor, class_name):
 
 
 def get_teachers_class_id(cursor, teacher_fio):
-    print(teacher_fio)
     postgreSQL_select_Query = "SELECT class_id FROM classroom_teachers WHERE teacher_fio = %s"
     cursor.execute(postgreSQL_select_Query, (teacher_fio,))
     data = cursor.fetchall()
-    print(data)
     if data:
         return data[0][0]
     else:
@@ -129,3 +127,21 @@ def get_shedule(day, chat_id):
                 str_ans += f' {num+1}) {el[0]} в кабинете {el[1]} \n'
 
     return str_ans
+
+def send_info_to_class(message, class_name, bot):
+    class_id = common.class_name_to_class_id[class_name]
+    #print(f'Пришло сообщение {message.text} для класса {common.class_name_to_class_id[class_name]}')
+    conn = database_connect()
+    teacher = message.chat.first_name + message.chat.last_name
+    if conn:
+        cursor = conn.cursor()
+        postgreSQL_select_Query = "SELECT * FROM users WHERE class_id = %s "
+        cursor.execute(postgreSQL_select_Query, (class_id, ))
+        data = cursor.fetchall()
+        print(data)
+        for student in data:
+            bot.send_message(
+                student[-1],
+                f'Сообщение от учителя {teacher}: \n'
+                f'{message.text}'
+            )
