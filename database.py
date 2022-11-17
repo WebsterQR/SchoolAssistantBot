@@ -130,7 +130,6 @@ def get_shedule(day, chat_id):
 
 def send_info_to_class(message, class_name, bot):
     class_id = common.class_name_to_class_id[class_name]
-    #print(f'Пришло сообщение {message.text} для класса {common.class_name_to_class_id[class_name]}')
     conn = database_connect()
     teacher = message.chat.first_name + message.chat.last_name
     if conn:
