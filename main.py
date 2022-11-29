@@ -110,13 +110,20 @@ def handle_text(message):
         bot.send_message(
             message.chat.id,
             ans,
-                reply_markup=[keyboards.MAIN_MENU.keyboard]
+            reply_markup=[keyboards.MAIN_MENU.keyboard]
         )
     if message.text == 'Найти учителя':
         bot.send_message(
             message.chat.id,
             'Выберите нужного Вам учителя',
             reply_markup=[keyboards.FIND_TEACHER.keyboard]
+        )
+    if message.text == 'Следующий урок':
+        ans = database.get_next_lesson(message.chat.id)
+        bot.send_message(
+            message.chat.id,
+            ans,
+            reply_markup=[keyboards.MAIN_MENU.keyboard]
         )
     #bot.send_message(message.chat.id, 'Вы написали: ' + message.text)
 

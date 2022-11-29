@@ -92,13 +92,10 @@ def get_shedule(day, chat_id):
         if week_day_num == 7:
             str_ans = "Сегодня воскресенье, уроков нет!"
         else:
-            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND " \
-                                      "class_id = %s"
-            cursor.execute(postgreSQL_select_Query, (week_day, class_id, ))
-            data = cursor.fetchall()
+            data = common.students_schedule[common.class_name_id[class_id]][week_day]
             str_ans = 'Расписание на сегодня: \n'
-            for num, el in enumerate(data):
-                str_ans += f'{num+1}) {el[0]} в кабинете {el[1]} \n'
+            for el in data:
+                str_ans += f'{el}) {data[el]} \n' if data[el] != None else ''
         return str_ans
     elif day == 'tomorrow':
         tomorrow_week_day_num = 1 if week_day_num == 7 else week_day_num + 1
@@ -106,26 +103,35 @@ def get_shedule(day, chat_id):
             str_ans = "Завтра воскресенье, уроков нет!"
         else:
             week_day = common.week_day[tomorrow_week_day_num]
-            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE week_day = %s AND " \
-                                      "class_id = %s"
-            cursor.execute(postgreSQL_select_Query, (week_day, class_id, ))
-            data = cursor.fetchall()
+            data = common.students_schedule[common.class_name_id[class_id]][week_day]
+            str_ans = 'Расписание на завтра: \n'
+            for el in data:
+                str_ans += f'{el}) {data[el]} \n' if data[el] != None else ''
             str_ans = 'Расписание на завтра: \n'
             for num, el in enumerate(data):
                 str_ans += f'{num + 1}) {el[0]} в кабинете {el[1]} \n'
         return str_ans
     elif day == 'all week':
-        print('====', class_id, '======')
         str_ans = 'Расписание на всю неделю: \n'
         for i in range(1, 7):
             if i == 6 and class_id < 80:
                 continue
-            postgreSQL_select_Query = "SELECT lesson, classroom_number FROM shedule WHERE class_id = %s AND " \
-                                      "week_day = %s"
-            cursor.execute(postgreSQL_select_Query, (class_id, common.week_day[i], ))
-            data = cursor.fetchall()
-            str_ans += f'{common.week_day[i]} : \n'
-            for num, el in enumerate(data):
-                str_ans += f' {num+1}) {el[0]} в кабинете {el[1]} \n'
-
+            data = common.students_schedule[common.class_name_id[class_id]]
+            str_ans = 'Расписание на неделю: \n'
+            for day in data:
+                str_ans += f'{day}: \n'
+                for lesson in data[day]:
+                    str_ans += f'{lesson}) {data[day][lesson]} \n' if data[day][lesson] != None else ''
     return str_ans
+
+def get_next_lesson(chat_id):
+    current_hour = datetime.datetime.now().hour
+    current_min = datetime.datetime.now().minute
+    schedule = get_shedule('today', chat_id)
+    lesson_num = get_lesson_num_by_time(current_hour, current_min)
+    str_ans = f'Следующий урок {schedule[lesson_num]}'
+    return str_ans
+
+def get_lesson_num_by_time(hour, minute):
+    all_mins = hour * 60 + minute
+    return (all_mins - 540) // 60
