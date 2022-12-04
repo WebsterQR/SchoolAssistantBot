@@ -73,7 +73,7 @@ class MAIN_MENU:
 
 class MAIN_MENU_FOR_TEACHERS:
     keyboard = ReplyKeyboardMarkup()
-    schedule = KeyboardButton('Расписание')
+    schedule = KeyboardButton('Расписание (педагог)')
     add_homework = KeyboardButton('Добавить домашнее задание')
     notify_the_class = KeyboardButton('Оповестить класс')
     keyboard.add(schedule, add_homework)

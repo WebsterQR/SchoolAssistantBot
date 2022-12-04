@@ -65,7 +65,7 @@ def check_existence_user_and_delete_if_necessary(conn, cursor, chat_id):
     data = cursor.fetchall()
     print(data)
     if len(data) > 0:
-        postgreSQL_delete_Query = "DELETE FROM users WHERE user_id = 176063054"
+        postgreSQL_delete_Query = "DELETE FROM users WHERE user_id = %s"
         cursor.execute(postgreSQL_delete_Query, (chat_id,))
         conn.commit()
 
@@ -81,6 +81,7 @@ def get_class_id_by_chat_id(chat_id):
 
 def get_shedule(day, chat_id):
     class_id = get_class_id_by_chat_id(chat_id)[0][0]
+    print(class_id)
     today_date = datetime.date.today()
     week_day_num = today_date.isoweekday()
     conn = database_connect()
@@ -109,7 +110,7 @@ def get_shedule(day, chat_id):
                 str_ans += f'{el}) {data[el]} \n' if data[el] != None else ''
             str_ans = 'Расписание на завтра: \n'
             for num, el in enumerate(data):
-                str_ans += f'{num + 1}) {el[0]} в кабинете {el[1]} \n'
+                str_ans += f'{num + 1}) {data[el]} \n' if data[el] != None else ''
         return str_ans
     elif day == 'all week':
         str_ans = 'Расписание на всю неделю: \n'
@@ -135,3 +136,20 @@ def get_next_lesson(chat_id):
 def get_lesson_num_by_time(hour, minute):
     all_mins = hour * 60 + minute
     return (all_mins - 540) // 60
+
+def send_info_to_class(message, class_name, bot):
+    class_id = common.class_name_to_class_id[class_name]
+    conn = database_connect()
+    teacher = message.chat.first_name + ' ' + message.chat.last_name
+    if conn:
+        cursor = conn.cursor()
+        postgreSQL_select_Query = "SELECT * FROM users WHERE class_id = %s "
+        cursor.execute(postgreSQL_select_Query, (class_id, ))
+        data = cursor.fetchall()
+        print(data)
+        for student in data:
+            bot.send_message(
+                student[-1],
+                f'Сообщение от учителя {teacher}: \n'
+                f'{message.text}'
+            )

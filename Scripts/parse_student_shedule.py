@@ -33,7 +33,19 @@ classes_columns_mapping = {
     'BG': '11В',
 }
 
-
+def get_one_week_dict():
+    one_week_dict = dict()
+    for day in ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']:
+        one_week_dict[day] = {
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+        7: ''
+    }
+    return one_week_dict
 def create_base():
     classes = ['5А', '5Б', '5В', '5Г', '5Д',
                '6А', '6Б', '6В', '6Г', '6Д',
@@ -51,17 +63,19 @@ def create_base():
         6: '',
         7: ''
     }
-    one_week_dict = {
-        'Понедельник': one_day_dict,
-        'Вторник': one_day_dict,
-        'Среда': one_day_dict,
-        'Четверг': one_day_dict,
-        'Пятница': one_day_dict,
-        'Суббота': one_day_dict
-    }
+    one_week_dict = dict()
+
+    # one_week_dict = {
+    #     'Понедельник': one_day_dict,
+    #     'Вторник': one_day_dict,
+    #     'Среда': one_day_dict,
+    #     'Четверг': one_day_dict,
+    #     'Пятница': one_day_dict,
+    #     'Суббота': one_day_dict
+    # }
     base_schedule_dict = dict()
     for one_class in classes:
-        base_schedule_dict[one_class] = one_week_dict
+        base_schedule_dict[one_class] = get_one_week_dict()
 
     return base_schedule_dict
 
@@ -82,8 +96,9 @@ def get_week_day_and_lesson_number(num):
 if __name__ == '__main__':
     base_schedule_dict = create_base()
     wb = xl.load_workbook('./input_files/shedule_student_2022_2023.xlsx')
-    sheet_name =  wb.get_sheet_names()[0]
-    sheet =  wb.get_sheet_by_name(sheet_name)
+    #sheet_name =  wb.get_sheet_names()[0]
+    sheet_name = wb.sheetnames
+    sheet = wb[sheet_name[0]]
     # print(base_schedule_dict)
     for column_name in classes_columns_mapping:
         for row_num in range(5, 46):
@@ -91,3 +106,4 @@ if __name__ == '__main__':
             class_name = classes_columns_mapping[column_name]
             week_day, lesson_num = get_week_day_and_lesson_number(row_num)
             base_schedule_dict[class_name][week_day][int(lesson_num) + 1] = subject
+    print(base_schedule_dict)

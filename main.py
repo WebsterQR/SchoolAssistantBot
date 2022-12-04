@@ -66,6 +66,15 @@ def choise_class(message, user_info):
     )
     print(user_info)
 
+def get_message_for_class(message):
+    class_name = message.text
+    msg = bot.send_message(
+            message.chat.id,
+            'Введите сообщение',
+            reply_markup=[keyboards.MAIN_MENU_FOR_TEACHERS.keyboard]
+        )
+    bot.register_next_step_handler(msg, database.send_info_to_class, class_name, bot)
+
 def confirm_teacher(message, user_info):
     if message.text == settings.auth.TEACHER_PASSWORD:
         database.add_user(user_info)
@@ -90,6 +99,12 @@ def handle_text(message):
             message.chat.id,
             'Выберите нужное расписание',
             reply_markup=[keyboards.SCHEDULE.keyboard]
+        )
+    if message.text == 'Расписание (педагог)':
+        bot.send_message(
+            message.chat.id,
+            '1) 9Б \n 2) 9Б \n 3) 9Г \n 4) \n 5) 9Б \n 6) 9В',
+            reply_markup=[keyboards.MAIN_MENU_FOR_TEACHERS.keyboard]
         )
     if message.text == 'Расписание на сегодня':
         ans = database.get_shedule('today', message.chat.id)
@@ -125,6 +140,14 @@ def handle_text(message):
             ans,
             reply_markup=[keyboards.MAIN_MENU.keyboard]
         )
+    if message.text == 'Оповестить класс':
+        msg = bot.send_message(
+            message.chat.id,
+            'Выберите класс, которому отправить сообщение.',
+            reply_markup=[keyboards.CLASS_CHOISE.keyboard]
+        )
+        print('msg = ', msg)
+        bot.register_next_step_handler(msg, get_message_for_class)
     #bot.send_message(message.chat.id, 'Вы написали: ' + message.text)
 
 
