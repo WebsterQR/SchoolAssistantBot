@@ -26,7 +26,7 @@ def add_user(user_info):
         else:
             teacher_fio = user_info['Фамилия'] + ' ' + user_info['Имя'] + ' ' + user_info['Отчество']
             class_id = get_teachers_class_id(cursor, teacher_fio)
-        cursor.execute("INSERT INTO users (name, surname, patronymic, position, class_id, user_id) "
+        cursor.execute("INSERT INTO school_users (name, surname, patronymic, position, class_id, user_id) "
                        "VALUES(%s, %s, %s, %s, %s, %s)",
                        (user_info['Имя'],
                         user_info['Фамилия'],
@@ -41,7 +41,7 @@ def add_user(user_info):
         print("Error while connecting to database, user was not added")
 
 def get_class_id(cursor, class_name):
-    postgreSQL_select_Query = "SELECT class_id FROM classes WHERE class_name = %s"
+    postgreSQL_select_Query = "SELECT class_id FROM school_classes WHERE class_name = %s"
     cursor.execute(postgreSQL_select_Query, (class_name,))
     data = cursor.fetchall()
     return data[0][0]
@@ -60,26 +60,29 @@ def get_teachers_class_id(cursor, teacher_fio):
 
 
 def check_existence_user_and_delete_if_necessary(conn, cursor, chat_id):
-    postgreSQL_select_Query = "SELECT * FROM users WHERE user_id = %s"
+    postgreSQL_select_Query = "SELECT * FROM school_users WHERE user_id = %s"
     cursor.execute(postgreSQL_select_Query, (chat_id,))
     data = cursor.fetchall()
     print(data)
     if len(data) > 0:
-        postgreSQL_delete_Query = "DELETE FROM users WHERE user_id = %s"
+        postgreSQL_delete_Query = "DELETE FROM school_users WHERE user_id = %s"
         cursor.execute(postgreSQL_delete_Query, (chat_id,))
         conn.commit()
 
 def get_class_id_by_chat_id(chat_id):
     conn = database_connect()
+    print(conn)
     if conn:
         cursor = conn.cursor()
-        postgreSQL_select_Query = "SELECT class_id FROM users WHERE user_id = %s"
+        postgreSQL_select_Query = "SELECT class_id FROM school_users WHERE user_id = %s"
+        print(postgreSQL_select_Query)
         cursor.execute(postgreSQL_select_Query, (chat_id,))
         data = cursor.fetchall()
         conn.close()
         return data
 
 def get_shedule(day, chat_id):
+    print(chat_id)
     class_id = get_class_id_by_chat_id(chat_id)[0][0]
     print(class_id)
     today_date = datetime.date.today()
@@ -143,7 +146,7 @@ def send_info_to_class(message, class_name, bot):
     teacher = message.chat.first_name + ' ' + message.chat.last_name
     if conn:
         cursor = conn.cursor()
-        postgreSQL_select_Query = "SELECT * FROM users WHERE class_id = %s "
+        postgreSQL_select_Query = "SELECT * FROM school_users WHERE class_id = %s "
         cursor.execute(postgreSQL_select_Query, (class_id, ))
         data = cursor.fetchall()
         print(data)
