@@ -21,6 +21,9 @@ teachers_list = [
 class_name_id = {
     51: '5А',
     52: '5Б',
+    53: '5В',
+    54: '5Г',
+    55: '5Д',
     92: '9Б'
 }
 class_name_to_class_id = {
