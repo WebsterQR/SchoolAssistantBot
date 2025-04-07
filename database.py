@@ -138,7 +138,8 @@ def get_next_lesson(chat_id):
     current_min = datetime.datetime.now().minute
     schedule = get_shedule('today', chat_id)
     lesson_num = get_lesson_num_by_time(current_hour, current_min)
-    str_ans = f'Следующий урок {schedule.split('\n')[lesson_num + 1]}'
+    next_lesson = schedule.split('\n')[lesson_num + 1]
+    str_ans = f'Следующий урок {next_lesson}'
     return str_ans
 
 def get_lesson_num_by_time(hour, minute):
