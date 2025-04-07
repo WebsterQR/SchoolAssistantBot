@@ -7,14 +7,18 @@ import settings
 
 def database_connect():
     try:
-        conn = psycopg2.connect(dbname=settings.database.database,
+        print('1')
+        conn = psycopg2.connect(database=settings.database.database,
                                 user=settings.database.user,
                                 password=settings.database.password,
                                 host=settings.database.host)
-    except:
+        print('CONNECTION SUCCESSFUL')
+    except psycopg2.Error as e:
+        print(e.diag.message_primary)
         conn = False
 
     return conn
+
 
 def add_user(user_info):
     conn = database_connect()
@@ -44,6 +48,7 @@ def get_class_id(cursor, class_name):
     postgreSQL_select_Query = "SELECT class_id FROM school_classes WHERE class_name = %s"
     cursor.execute(postgreSQL_select_Query, (class_name,))
     data = cursor.fetchall()
+    print(data)
     return data[0][0]
 
 
@@ -133,7 +138,7 @@ def get_next_lesson(chat_id):
     current_min = datetime.datetime.now().minute
     schedule = get_shedule('today', chat_id)
     lesson_num = get_lesson_num_by_time(current_hour, current_min)
-    str_ans = f'Следующий урок {schedule[lesson_num]}'
+    str_ans = f'Следующий урок {schedule.split('\n')[lesson_num + 1]}'
     return str_ans
 
 def get_lesson_num_by_time(hour, minute):

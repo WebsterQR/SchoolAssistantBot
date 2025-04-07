@@ -1,8 +1,10 @@
+from time import sleep
+
 import telebot
 import settings
 import keyboards
 import database
-from aiogram.types import ReplyKeyboardRemove
+from telebot.types import ReplyKeyboardRemove
 
 bot = telebot.TeleBot(settings.Telegram.TOKEN)
 
@@ -12,7 +14,7 @@ def start(message):
     msg = bot.send_message(
         message.chat.id,
         'Привет! Для начала мне нужно знать кто ты - учитель или ученик...',
-        reply_markup=[keyboards.STUDENT_OR_TEACHER.keyboard]
+        reply_markup=keyboards.STUDENT_OR_TEACHER.keyboard
     )
     bot.register_next_step_handler(msg, position_step)
 
@@ -31,7 +33,7 @@ def position_step(message):
     msg = bot.send_message(
         message.chat.id,
         'А теперь давай познакомимся! Введи свои Фамилию, Имя, Отчество!',
-        reply_markup=[ReplyKeyboardRemove()]
+        reply_markup=ReplyKeyboardRemove()
     )
     bot.register_next_step_handler(msg, fio_step, user_info)
 
@@ -45,7 +47,7 @@ def fio_step(message, user_info):
         msg = bot.send_message(
             message.chat.id,
             f'Очень приятно, {user_info["Имя"]}! А теперь расскажи мне в каком классе ты учишься!',
-            reply_markup=[keyboards.CLASS_CHOISE.keyboard]
+            reply_markup=keyboards.CLASS_CHOISE.keyboard
         )
         bot.register_next_step_handler(msg, choise_class, user_info)
     else:
@@ -59,10 +61,11 @@ def fio_step(message, user_info):
 def choise_class(message, user_info):
     user_info['Класс'] = message.text
     database.add_user(user_info)
+    print('added')
     bot.send_message(
         message.chat.id,
         'Регистрация в боте прошла успешно!',
-        reply_markup=[keyboards.MAIN_MENU.keyboard]
+        reply_markup=keyboards.MAIN_MENU.keyboard
     )
     print(user_info)
 
@@ -71,7 +74,7 @@ def get_message_for_class(message):
     msg = bot.send_message(
             message.chat.id,
             'Введите сообщение',
-            reply_markup=[keyboards.MAIN_MENU_FOR_TEACHERS.keyboard]
+            reply_markup=keyboards.MAIN_MENU_FOR_TEACHERS.keyboard
         )
     bot.register_next_step_handler(msg, database.send_info_to_class, class_name, bot)
 
@@ -81,13 +84,13 @@ def confirm_teacher(message, user_info):
         bot.send_message(
             message.chat.id,
             'Регистрация в боте прошла успешно!',
-            reply_markup=[keyboards.MAIN_MENU_FOR_TEACHERS.keyboard]
+            reply_markup=keyboards.MAIN_MENU_FOR_TEACHERS.keyboard
         )
     else:
         msg = bot.send_message(
             message.chat.id,
             'Неверный пароль, попробуйте еще раз!',
-            reply_markup=[ReplyKeyboardRemove()]
+            reply_markup=ReplyKeyboardRemove()
         )
         bot.register_next_step_handler(msg, confirm_teacher, user_info)
 
@@ -98,53 +101,53 @@ def handle_text(message):
         bot.send_message(
             message.chat.id,
             'Выберите нужное расписание',
-            reply_markup=[keyboards.SCHEDULE.keyboard]
+            reply_markup=keyboards.SCHEDULE.keyboard
         )
     if message.text == 'Расписание (педагог)':
         bot.send_message(
             message.chat.id,
             '1) 9Б \n 2) 9Б \n 3) 9Г \n 4) \n 5) 9Б \n 6) 9В',
-            reply_markup=[keyboards.MAIN_MENU_FOR_TEACHERS.keyboard]
+            reply_markup=keyboards.MAIN_MENU_FOR_TEACHERS.keyboard
         )
     if message.text == 'Расписание на сегодня':
         ans = database.get_shedule('today', message.chat.id)
         bot.send_message(
             message.chat.id,
             ans,
-            reply_markup=[keyboards.MAIN_MENU.keyboard]
+            reply_markup=keyboards.MAIN_MENU.keyboard
         )
     if message.text == 'Расписание на завтра':
         ans = database.get_shedule('tomorrow', message.chat.id)
         bot.send_message(
             message.chat.id,
             ans,
-            reply_markup=[keyboards.MAIN_MENU.keyboard]
+            reply_markup=keyboards.MAIN_MENU.keyboard
         )
     if message.text == 'Расписание на всю неделю':
         ans = database.get_shedule('all week', message.chat.id)
         bot.send_message(
             message.chat.id,
             ans,
-            reply_markup=[keyboards.MAIN_MENU.keyboard]
+            reply_markup=keyboards.MAIN_MENU.keyboard
         )
     if message.text == 'Найти учителя':
         bot.send_message(
             message.chat.id,
             'Выберите нужного Вам учителя',
-            reply_markup=[keyboards.FIND_TEACHER.keyboard]
+            reply_markup=keyboards.FIND_TEACHER.keyboard
         )
     if message.text == 'Следующий урок':
         ans = database.get_next_lesson(message.chat.id)
         bot.send_message(
             message.chat.id,
             ans,
-            reply_markup=[keyboards.MAIN_MENU.keyboard]
+            reply_markup=keyboards.MAIN_MENU.keyboard
         )
     if message.text == 'Оповестить класс':
         msg = bot.send_message(
             message.chat.id,
             'Выберите класс, которому отправить сообщение.',
-            reply_markup=[keyboards.CLASS_CHOISE.keyboard]
+            reply_markup=keyboards.CLASS_CHOISE.keyboard
         )
         print('msg = ', msg)
         bot.register_next_step_handler(msg, get_message_for_class)
@@ -152,4 +155,9 @@ def handle_text(message):
 
 
 # Запускаем бота
-bot.polling(none_stop=True, interval=0)
+while True:
+    try:
+        bot.infinity_polling(none_stop=True)
+    except Exception as _ex:
+        print(_ex)
+        sleep(10)
